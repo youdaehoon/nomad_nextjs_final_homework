@@ -4,7 +4,7 @@ interface IProps {
   children: React.ReactNode;
 }
 const Rayout = ({ children }: IProps) => {
-  return <div className="px-2">{children}</div>;
+  return <div className="w-screen h-screen">{children}</div>;
 };
 
 export default Rayout;

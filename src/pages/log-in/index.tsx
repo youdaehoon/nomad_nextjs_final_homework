@@ -18,8 +18,8 @@ const LogIn = () => {
   const onValid: SubmitHandler<LogInForm> = (e) => {};
   const onError: SubmitErrorHandler<LogInForm> = (e) => {};
   return (
-    <div>
-      <div className="bg-zinc-700 text-white p-6 flex flex-col items-center rounded-md">
+    <div className="w-full h-full flex items-center justify-center md:px-2 md:bg-indigo-500">
+      <div className="w-full h-full md:h-fit justify-center lg:w-[1300px] bg-zinc-700 text-white p-6 flex flex-col items-center rounded-md">
         <h2 className="font-semibold text-xl">돌아오신 것을 환영해요!</h2>
         <h3 className="text-xs font-thin text-zinc-400 mt-2">
           다시 만나다니 너무 반가워요!

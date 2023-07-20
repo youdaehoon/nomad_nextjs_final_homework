@@ -1,4 +1,5 @@
 import { cls } from "@/libs/utils";
+import Link from "next/link";
 import React from "react";
 import { SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 
@@ -14,15 +15,19 @@ const CreateAccount = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<CreateAccountFrom>();
   const regMail = new RegExp(`^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$`);
 
   const onValid: SubmitHandler<CreateAccountFrom> = (e) => {};
-  const onError: SubmitErrorHandler<CreateAccountFrom> = (e) => {};
+  const onError: SubmitErrorHandler<CreateAccountFrom> = (e) => {
+    console.log(watch());
+    console.log(e);
+  };
   return (
-    <div className="bg-indigo-500 w-full h-full p-4">
-      <div className="w-full h-full justify-center   bg-zinc-700 text-white p-6 flex flex-col items-center rounded-md">
+    <div className="bg-indigo-500 w-full h-full p-4 flex items-center justify-center">
+      <div className="w-full h-full justify-center max-w-lg  bg-zinc-700 text-white p-6 flex flex-col items-center rounded-md">
         <div className="w-full h-full">
           <h1 className="text-center font-semibold text-lg">계정 만들기</h1>
           <form onSubmit={handleSubmit(onValid, onError)}>
@@ -55,7 +60,7 @@ const CreateAccount = () => {
                   htmlFor="name"
                 >
                   <span>이름</span>
-                  <span className="text-red-600">*{errors.email?.message}</span>
+                  <span className="text-red-600">*{errors.name?.message}</span>
                 </label>
                 <input
                   className={cls(
@@ -102,7 +107,7 @@ const CreateAccount = () => {
                     {...register("year", {
                       required: "년도를 입력해주세요.",
                       validate: {
-                        nullCheck: (e) => e === 0 || "년도를 입력해주세요.",
+                        nullCheck: (e) => +e !== 0 || "년도를 입력해주세요.",
                       },
                     })}
                   >
@@ -121,11 +126,11 @@ const CreateAccount = () => {
                     {...register("month", {
                       required: "월을 입력해주세요.",
                       validate: {
-                        nullCheck: (e) => e === 0 || "월을 입력해주세요.",
+                        nullCheck: (e) => +e !== 0 || "월을 입력해주세요.",
                       },
                     })}
                   >
-                    <option>월</option>
+                    <option value={0}>월</option>
                     {new Array(12).fill(0).map((_, idx) => {
                       const month = idx + 1;
                       return (
@@ -138,13 +143,13 @@ const CreateAccount = () => {
                   <select
                     className="bg-zinc-800 col-span-2"
                     {...register("date", {
-                      required: "년도를 입력해주세요.",
+                      required: "일을 입력해주세요.",
                       validate: {
-                        nullCheck: (e) => e === 0 || "월을 입력해주세요.",
+                        nullCheck: (e) => +e !== 0 || "일을 입력해주세요.",
                       },
                     })}
                   >
-                    <option>일</option>
+                    <option value={0}>일</option>
                     {new Array(30).fill(0).map((_, idx) => {
                       const date = idx + 1;
                       return (
@@ -164,6 +169,13 @@ const CreateAccount = () => {
               계속하기
             </button>
           </form>
+          <div className="mt-10">
+            <Link href={"/log-in"}>
+              <span className="text-sky-400 text-sm">
+                이미 계정이 있으신가요?
+              </span>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

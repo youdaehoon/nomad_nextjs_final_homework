@@ -15,20 +15,20 @@ interface IPops {
   key: string;
 }
 const TweetDetail = ({ key }: IPops) => {
-  const getDetail = async () => {
+  const getDetail = async (id: string) => {
     const res = await fetch("/api/tweet/detail", {
       method: "post",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        tweetId: key,
+        tweetId: id,
       }),
     });
     const json = await res.json();
     return json;
   };
-  const { data, mutate } = useSWR("api/tweet/detail", getDetail);
+  const { data, mutate } = useSWR("api/tweet/detail", () => getDetail(key));
   const router = useRouter();
 
   const [datas, setDatas] = useState<Tweet[]>([

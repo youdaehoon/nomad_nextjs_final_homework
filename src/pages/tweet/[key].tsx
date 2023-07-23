@@ -132,10 +132,10 @@ const TweetDetail = ({ key }: IPops) => {
           <div className="flex justify-between border-b border-gray-600 border-solid  px-4 pb-5">
             <div className="flex items-center space-x-2">
               <div className="bg-indigo-400 w-20 h-20 rounded-full" />
-              <span>{data.tweet.name}</span>
+              <span>{data?.tweet?.name}</span>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-xs text-gray-400">{data.tweet?.date}</span>
+              <span className="text-xs text-gray-400">{data?.tweet?.date}</span>
 
               <div
                 onClick={handleClick}
@@ -144,12 +144,12 @@ const TweetDetail = ({ key }: IPops) => {
                 <div className="group-hover:-translate-y-1 transition-transform">
                   👍
                 </div>
-                <div>{data.tweet?.like}</div>
+                <div>{data?.tweet?.like}</div>
               </div>
             </div>
           </div>
 
-          <span className="py-10 px-5">{data.tweet?.content}</span>
+          <span className="py-10 px-5">{data?.tweet?.content}</span>
         </div>
 
         <div className="relative flex-1  border-t border-gray-600 border-solid ">

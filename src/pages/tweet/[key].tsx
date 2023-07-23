@@ -12,9 +12,9 @@ interface TweetInput {
   content: string;
 }
 interface IPops {
-  key: string;
+  tweetId: string;
 }
-const TweetDetail = ({ key }: IPops) => {
+const TweetDetail = ({ tweetId }: IPops) => {
   const getDetail = async (id: string) => {
     const res = await fetch("/api/tweet/detail", {
       method: "post",
@@ -28,7 +28,8 @@ const TweetDetail = ({ key }: IPops) => {
     const json = await res.json();
     return json;
   };
-  const { data, mutate } = useSWR("api/tweet/detail", () => getDetail(key));
+  const { data, mutate } = useSWR("api/tweet/detail", () => getDetail(tweetId));
+  console.log(data);
   const router = useRouter();
 
   const [datas, setDatas] = useState<Tweet[]>([
@@ -189,6 +190,7 @@ export default TweetDetail;
 export const getServerSideProps = async (context: NextPageContext) => {
   const { query } = context;
   const { key } = query;
+  console.log(key);
 
-  return { props: { key } };
+  return { props: { tweetId: key } };
 };

@@ -62,7 +62,7 @@ const TweetList = ({ datas }: IProps) => {
   return (
     <div className="relative   flex-1">
       <div className="px-4 h-[calc(100%_-_65px)] flex flex-col  overflow-y-auto ">
-        {datas.map((data, idx) => (
+        {datas?.map((data, idx) => (
           <Link key={"tweet" + idx} href={`/tweet/${data.id}`}>
             <div className="flex py-5 space-x-4 w-full hover:bg-zinc-600 cursor-pointer select-none">
               <div className="bg-indigo-400 w-9 h-9 rounded-full" />

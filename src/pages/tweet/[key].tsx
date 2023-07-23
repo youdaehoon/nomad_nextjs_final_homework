@@ -1,6 +1,7 @@
 import SideInfo from "@/components/main/SideInfo";
 import { Tweet } from "@/components/main/TweetList";
 import { formatTweet } from "@/libs/utils";
+import { NextPageContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -10,23 +11,24 @@ import useSWR from "swr";
 interface TweetInput {
   content: string;
 }
-const TweetDetail = () => {
+interface IPops {
+  key: string;
+}
+const TweetDetail = ({ key }: IPops) => {
   const getDetail = async () => {
-    console.log(router.query.key);
     const res = await fetch("/api/tweet/detail", {
       method: "post",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        tweetId: router.query.key,
+        tweetId: key,
       }),
     });
     const json = await res.json();
     return json;
   };
   const { data, mutate } = useSWR("api/tweet/detail", getDetail);
-  console.log(data);
   const router = useRouter();
 
   const [datas, setDatas] = useState<Tweet[]>([
@@ -183,3 +185,10 @@ const TweetDetail = () => {
 };
 
 export default TweetDetail;
+
+export const getServerSideProps = async (context: NextPageContext) => {
+  const { query } = context;
+  const { key } = query;
+
+  return { props: { key } };
+};

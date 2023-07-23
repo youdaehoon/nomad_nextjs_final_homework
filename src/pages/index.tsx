@@ -9,19 +9,6 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
   const router = useRouter();
   const { data } = useSWR("api/tweet/get");
-  console.log(data);
-  const [tweet, setTweet] = useState<Tweet[]>([]);
-  // const getTweets = async () => {
-  //   const res = await fetch("api/tweet/get", {
-  //     method: "GET",
-
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   });
-  //   const json = await res.json();
-  //   setTweet(json);
-  // };
 
   const isLogin = async () => {
     const res = await fetch("api/user/check-authr", {

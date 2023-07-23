@@ -14,28 +14,10 @@ export interface Tweet {
   like: number;
   id: number;
 }
-const TweetList = () => {
-  const [datas, setDatas] = useState<Tweet[]>([
-    {
-      id: 1,
-      url: "",
-      name: "유대훈",
-      date: "2023.07.04 오후 7:26",
-      content: `2023.07.04 화 [] 캐롯마켓 강의 [o] 코드 챌린지 [o] 운동 [o]
-          알고리즘 [o] 캠블리 [] 테크인터뷰 준비 [o] 주간회고 작성 [o]
-          오페라의 유령 보러가야디`,
-      like: 2,
-    },
-    {
-      id: 2,
-      url: "",
-      name: "유대훈",
-      date: "2023.07.04 오후 7:26",
-      content: `마치개님은 헬스 다니시나요~? 요즘 운동 꾸준히 하시는 모습 보기
-          좋습니다! 오늘도 파이팅이에요🉑`,
-      like: 0,
-    },
-  ]);
+interface IProps {
+  datas: Tweet[];
+}
+const TweetList = ({ datas }: IProps) => {
   const {
     register,
     handleSubmit,
@@ -43,20 +25,34 @@ const TweetList = () => {
     formState: { errors },
   } = useForm<TweetInput>();
 
-  const onValid: SubmitHandler<TweetInput> = (e) => {
-    console.log(e.content);
-    setDatas((prev) => [
-      ...prev,
-      {
-        id: 3,
-        url: "",
-        name: "유대훈",
-        date: "2023.07.04 오후 7:26",
-        content: e.content,
-        like: 0,
+  const onValid: SubmitHandler<TweetInput> = async (e) => {
+    const res = await fetch("api/tweet/create", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
       },
-    ]);
-    reset();
+      body: JSON.stringify({
+        content: e.content,
+      }),
+    });
+    if (res.status === 200) {
+      reset();
+    }
+    if (res.status === 404) {
+      alert("실패");
+    }
+  };
+
+  const handleClick = async (tweetId: number) => {
+    const res = await fetch("/api/tweet/like", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        tweetId,
+      }),
+    });
   };
   return (
     <div className="relative   flex-1">
@@ -77,6 +73,7 @@ const TweetList = () => {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
+                    handleClick(data.id);
                   }}
                 >
                   <div className="group-hover:-translate-y-1 transition-transform">

@@ -1,16 +1,51 @@
 import SideInfo from "@/components/main/SideInfo";
-import TweetList from "@/components/main/TweetList";
+import TweetList, { Tweet } from "@/components/main/TweetList";
 import { Inter } from "next/font/google";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  const router = useRouter();
+  const [tweet, setTweet] = useState<Tweet[]>([]);
+  const getTweets = async () => {
+    const res = await fetch("api/tweet/get", {
+      method: "GET",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const json = await res.json();
+    setTweet(json);
+  };
+
+  const isLogin = async () => {
+    const res = await fetch("api/user/check-authr", {
+      method: "GET",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (res.status === 404) {
+      router.push("/log-in");
+    }
+    if (res.status === 200) {
+      getTweets();
+    }
+  };
+  useEffect(() => {
+    isLogin();
+  }, []);
+
   return (
     <div className="w-full h-full bg-zinc-700 flex text-white">
       <div className="h-full p-5 bg-zinc-900">
         <div className="bg-white w-10 h-10 flex items-center justify-center rounded-full">
           <svg
-            style={{ color: "rgb(29, 155, 240);" }}
+            style={{ color: "rgb(29, 155, 240)" }}
             xmlns="http://www.w3.org/2000/svg"
             width="25"
             height="25"
@@ -26,7 +61,7 @@ export default function Home() {
         </div>
       </div>
       <SideInfo />
-      <TweetList />
+      <TweetList datas={tweet} />
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { Tweet } from "@/components/main/TweetList";
 import { formatTweet } from "@/libs/utils";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 interface TweetInput {
@@ -11,6 +11,7 @@ interface TweetInput {
 }
 const TweetDetail = () => {
   const router = useRouter();
+  const [detail, setDetail] = useState<Tweet>();
   const [datas, setDatas] = useState<Tweet[]>([
     {
       id: 1,
@@ -51,6 +52,33 @@ const TweetDetail = () => {
     },
   ]);
 
+  const getDetail = async () => {
+    console.log(router.query.key);
+    const res = await fetch("/api/tweet/detail", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        tweetId: router.query.key,
+      }),
+    });
+    const json = await res.json();
+    setDetail({
+      content: json.tweet.content,
+      id: json.tweet.id,
+      date: json.tweet.createdAt,
+      like: json.tweet.like,
+      name: json.tweet.user.name,
+      url: "",
+    });
+    console.log(res.status, json);
+  };
+
+  useEffect(() => {
+    getDetail();
+  }, []);
+
   const {
     register,
     handleSubmit,
@@ -59,7 +87,6 @@ const TweetDetail = () => {
   } = useForm<TweetInput>();
 
   const onValid: SubmitHandler<TweetInput> = (e) => {
-    console.log(e.content);
     setDatas((prev) => [
       ...prev,
       {
@@ -101,26 +128,21 @@ const TweetDetail = () => {
           <div className="flex justify-between border-b border-gray-600 border-solid  px-4 pb-5">
             <div className="flex items-center space-x-2">
               <div className="bg-indigo-400 w-20 h-20 rounded-full" />
-              <span>유대훈</span>
+              <span>{detail?.name}</span>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-xs text-gray-400">
-                2023.07.04 오후 7:26
-              </span>
+              <span className="text-xs text-gray-400">{detail?.date}</span>
 
               <div className="flex space-x-1 bg-zinc-800 w-fit p-1.5 rounded-lg group cursor-pointer">
                 <div className="group-hover:-translate-y-1 transition-transform">
                   👍
                 </div>
-                <div>2</div>
+                <div>{detail?.like}</div>
               </div>
             </div>
           </div>
 
-          <span className="py-10 px-5">
-            `마치개님은 헬스 다니시나요~? 요즘 운동 꾸준히 하시는 모습 보기
-            좋습니다! 오늘도 파이팅이에요🉑`
-          </span>
+          <span className="py-10 px-5">{detail?.content}</span>
         </div>
 
         <div className="relative flex-1  border-t border-gray-600 border-solid ">

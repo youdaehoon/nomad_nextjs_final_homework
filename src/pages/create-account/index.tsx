@@ -20,11 +20,27 @@ const CreateAccount = () => {
   } = useForm<CreateAccountFrom>();
   const regMail = new RegExp(`^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$`);
 
-  const onValid: SubmitHandler<CreateAccountFrom> = (e) => {};
-  const onError: SubmitErrorHandler<CreateAccountFrom> = (e) => {
-    console.log(watch());
-    console.log(e);
+  const onValid: SubmitHandler<CreateAccountFrom> = async (e) => {
+    const res = await fetch("/api/user/create-account", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: e.name,
+        password: e.password,
+        email: e.email,
+        birthDate: e.year + "-" + e.month + "-" + e.date,
+      }),
+    });
+    if (res.status === 201) {
+      alert("you have account");
+    }
+    if (res.status === 200) {
+      alert("account created");
+    }
   };
+  const onError: SubmitErrorHandler<CreateAccountFrom> = (e) => {};
   return (
     <div className="bg-indigo-500 w-full h-full p-4 flex items-center justify-center">
       <div className="w-full h-full justify-center max-w-lg  bg-zinc-700 text-white p-6 flex flex-col items-center rounded-md">

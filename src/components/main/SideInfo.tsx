@@ -1,6 +1,30 @@
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 
+interface Profile {
+  name: string;
+}
 const SideInfo = () => {
+  const [profile, setProfile] = useState<Profile>();
+  const router = useRouter();
+  const handleClick = async () => {
+    const res = await fetch("/api/user/log-out");
+    if (res.status === 200) {
+      router.push("log-in");
+    }
+  };
+
+  const getProfile = async () => {
+    const res = await fetch("/api/user/profile", {});
+    const json = await res.json();
+
+    if (res.status === 200) {
+      setProfile({ name: json.Profile.name });
+    }
+  };
+  useEffect(() => {
+    getProfile();
+  }, []);
   return (
     <div className="h-full bg-zinc-800  w-56 flex flex-col">
       <div className="shadow-md w-full px-2 py-3 font-semibold text-xl">
@@ -18,9 +42,9 @@ const SideInfo = () => {
         <div className="flex p-2 items-center justify-between  bg-zinc-900">
           <div className="flex items-center space-x-2">
             <div className="bg-indigo-500 w-10 h-10 rounded-full" />
-            <h4 className="font-semibold">유대훈</h4>
+            <h4 className="font-semibold">{profile?.name}</h4>
           </div>
-          <div className="cursor-pointer">
+          <div className="cursor-pointer" onClick={handleClick}>
             <svg
               style={{ color: "white" }}
               xmlns="http://www.w3.org/2000/svg"

@@ -1,5 +1,6 @@
 import { cls } from "@/libs/utils";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
@@ -8,6 +9,7 @@ interface LogInForm {
   password: string;
 }
 const LogIn = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -15,7 +17,25 @@ const LogIn = () => {
   } = useForm<LogInForm>();
   const regMail = new RegExp(`^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$`);
 
-  const onValid: SubmitHandler<LogInForm> = (e) => {};
+  const onValid: SubmitHandler<LogInForm> = async (e) => {
+    const res = await fetch("/api/user/log-in", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: e.email,
+        password: e.password,
+      }),
+    });
+    if (res.status === 404) {
+      alert("회원정보 불일치");
+    }
+    if (res.status === 200) {
+      alert("로그인성공");
+      router.push("/");
+    }
+  };
   const onError: SubmitErrorHandler<LogInForm> = (e) => {};
   return (
     <div className="w-full h-full flex items-center justify-center md:px-2 md:bg-indigo-500">

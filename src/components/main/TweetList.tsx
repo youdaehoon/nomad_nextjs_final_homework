@@ -2,6 +2,7 @@ import { formatTweet } from "@/libs/utils";
 import Link from "next/link";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import useSWR from "swr";
 
 interface TweetInput {
   content: string;
@@ -18,6 +19,8 @@ interface IProps {
   datas: Tweet[];
 }
 const TweetList = ({ datas }: IProps) => {
+  const { data, mutate } = useSWR("api/tweet/get");
+
   const {
     register,
     handleSubmit,
@@ -37,6 +40,7 @@ const TweetList = ({ datas }: IProps) => {
     });
     if (res.status === 200) {
       reset();
+      mutate();
     }
     if (res.status === 404) {
       alert("실패");
@@ -44,7 +48,7 @@ const TweetList = ({ datas }: IProps) => {
   };
 
   const handleClick = async (tweetId: number) => {
-    const res = await fetch("/api/tweet/like", {
+    const res = await fetch("/api/tweet/fav", {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -53,6 +57,7 @@ const TweetList = ({ datas }: IProps) => {
         tweetId,
       }),
     });
+    mutate();
   };
   return (
     <div className="relative   flex-1">

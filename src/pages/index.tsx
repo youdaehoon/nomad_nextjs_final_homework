@@ -3,23 +3,25 @@ import TweetList, { Tweet } from "@/components/main/TweetList";
 import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-
+import useSWR from "swr";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const router = useRouter();
+  const { data } = useSWR("api/tweet/get");
+  console.log(data);
   const [tweet, setTweet] = useState<Tweet[]>([]);
-  const getTweets = async () => {
-    const res = await fetch("api/tweet/get", {
-      method: "GET",
+  // const getTweets = async () => {
+  //   const res = await fetch("api/tweet/get", {
+  //     method: "GET",
 
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const json = await res.json();
-    setTweet(json);
-  };
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   });
+  //   const json = await res.json();
+  //   setTweet(json);
+  // };
 
   const isLogin = async () => {
     const res = await fetch("api/user/check-authr", {
@@ -33,7 +35,7 @@ export default function Home() {
       router.push("/log-in");
     }
     if (res.status === 200) {
-      getTweets();
+      // getTweets();
     }
   };
   useEffect(() => {
@@ -61,7 +63,7 @@ export default function Home() {
         </div>
       </div>
       <SideInfo />
-      <TweetList datas={tweet} />
+      {data && <TweetList datas={data} />}
     </div>
   );
 }

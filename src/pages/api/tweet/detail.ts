@@ -8,12 +8,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log(tweetId);
   const tweet = await client.tweet.findUnique({
     where: { id: +tweetId },
-    include: { comment: true, user: true },
+    include: { comment: true, user: true, _count: { select: { favs: true } } },
   });
+  const result = {
+    url: tweet!.user.avatar,
+    name: tweet!.user.name,
+    date: tweet!.createdAt.toISOString(),
+    content: tweet!.content,
+    like: tweet!._count.favs,
+    id: tweet!.id,
+  };
 
   res.status(200).send({
     ok: true,
-    tweet,
+    tweet: result,
   });
 }
 

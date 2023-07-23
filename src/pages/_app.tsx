@@ -1,11 +1,19 @@
 import Rayout from "@/components/layout";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
+import { SWRConfig } from "swr";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <Rayout>
-      <Component {...pageProps} />
-    </Rayout>
+    <SWRConfig
+      value={{
+        fetcher: (url: string) =>
+          fetch(url).then((response) => response.json()),
+      }}
+    >
+      <Rayout>
+        <Component {...pageProps} />
+      </Rayout>
+    </SWRConfig>
   );
 }

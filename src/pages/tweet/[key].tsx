@@ -5,13 +5,30 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import useSWR from "swr";
 
 interface TweetInput {
   content: string;
 }
 const TweetDetail = () => {
+  const getDetail = async () => {
+    console.log(router.query.key);
+    const res = await fetch("/api/tweet/detail", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        tweetId: router.query.key,
+      }),
+    });
+    const json = await res.json();
+    return json;
+  };
+  const { data, mutate } = useSWR("api/tweet/detail", getDetail);
+  console.log(data);
   const router = useRouter();
-  const [detail, setDetail] = useState<Tweet>();
+
   const [datas, setDatas] = useState<Tweet[]>([
     {
       id: 1,
@@ -33,7 +50,7 @@ const TweetDetail = () => {
       like: 0,
     },
     {
-      id: 2,
+      id: 3,
       url: "",
       name: "유대훈",
       date: "2023.07.04 오후 7:26",
@@ -42,7 +59,7 @@ const TweetDetail = () => {
       like: 0,
     },
     {
-      id: 2,
+      id: 4,
       url: "",
       name: "유대훈",
       date: "2023.07.04 오후 7:26",
@@ -51,33 +68,6 @@ const TweetDetail = () => {
       like: 0,
     },
   ]);
-
-  const getDetail = async () => {
-    console.log(router.query.key);
-    const res = await fetch("/api/tweet/detail", {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        tweetId: router.query.key,
-      }),
-    });
-    const json = await res.json();
-    setDetail({
-      content: json.tweet.content,
-      id: json.tweet.id,
-      date: json.tweet.createdAt,
-      like: json.tweet.like,
-      name: json.tweet.user.name,
-      url: "",
-    });
-    console.log(res.status, json);
-  };
-
-  useEffect(() => {
-    getDetail();
-  }, []);
 
   const {
     register,
@@ -99,6 +89,18 @@ const TweetDetail = () => {
       },
     ]);
     reset();
+  };
+  const handleClick = async () => {
+    const res = await fetch("/api/tweet/fav", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        tweetId: router.query.key,
+      }),
+    });
+    mutate();
   };
   return (
     <div className="w-full h-full bg-zinc-700 flex text-white">
@@ -128,21 +130,24 @@ const TweetDetail = () => {
           <div className="flex justify-between border-b border-gray-600 border-solid  px-4 pb-5">
             <div className="flex items-center space-x-2">
               <div className="bg-indigo-400 w-20 h-20 rounded-full" />
-              <span>{detail?.name}</span>
+              <span>{data.tweet.name}</span>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-xs text-gray-400">{detail?.date}</span>
+              <span className="text-xs text-gray-400">{data.tweet?.date}</span>
 
-              <div className="flex space-x-1 bg-zinc-800 w-fit p-1.5 rounded-lg group cursor-pointer">
+              <div
+                onClick={handleClick}
+                className="flex space-x-1 bg-zinc-800 w-fit p-1.5 rounded-lg group cursor-pointer"
+              >
                 <div className="group-hover:-translate-y-1 transition-transform">
                   👍
                 </div>
-                <div>{detail?.like}</div>
+                <div>{data.tweet?.like}</div>
               </div>
             </div>
           </div>
 
-          <span className="py-10 px-5">{detail?.content}</span>
+          <span className="py-10 px-5">{data.tweet?.content}</span>
         </div>
 
         <div className="relative flex-1  border-t border-gray-600 border-solid ">

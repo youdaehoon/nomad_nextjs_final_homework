@@ -23,6 +23,7 @@ model User {
   Token     Token[]
   tweet Tweet[]
   comment Comment[]
+  fav       Fav[]
 }
 
 model Token {
@@ -58,15 +59,20 @@ userId Int
 user User  @relation(fields: [userId], references: [id],onDelete: Cascade)
   createdAt DateTime @default(now())
 comment Comment[]
-
+ favs        Fav[]
 @@index([userId])
 }
 
-// model Likes{
-//   id Int @id @default(autoincrement())
-// userId Int
-// teetId 
-// user User  @relation(fields: [userId], references: [id],onDelete: Cascade)
-// @@index([userId])
+model Fav {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tweet   Tweet  @relation(fields: [tweettId], references: [id], onDelete: Cascade)
+  tweettId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-// }
+  @@index([userId])
+   @@index([tweettId])
+
+}
